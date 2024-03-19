@@ -1,10 +1,14 @@
-import { FlatList, Text, TextInput, View } from "react-native";
+import { Alert, FlatList, Text, TextInput, View } from "react-native";
 import { useRef, useState } from "react";
 import { styles } from "./styles";
 
 import { Header } from "../../components/Header";
+import { Task } from "../../components/Task";
 
 import { TaskDTO } from "../../dtos/TaskDTO";
+import { Empty } from "../../components/Empty";
+import { uuid } from "../../utils/uuid";
+
 
 export function HomeScreen() {
   const [tasks, setTasks] = useState<TaskDTO[]>([]);
@@ -12,8 +16,48 @@ export function HomeScreen() {
   const newTaskInputRef = useRef<TextInput>(null);
 
   const handleTaskAdd = () => {
-    console.log("Adicionou");
+    if (newTask !== "" && newTask.length >= 5) {
+      setTasks((tasks) => [
+        ...tasks,
+        { id: uuid(), isCompleted: false, title: newTask.trim() },
+      ]);
+
+      setNewTask('')
+      newTaskInputRef.current?.blur()
+    } else {
+      Alert.alert(
+        "Tarefa não cadastrada",
+        "A tarefa deve ter mais de 5 caracteres"
+      );
+    }
   };
+
+  const handleTaskDone = (id: string) => {
+    setTasks((task) =>
+      task.map((task) => {
+        task.id === id ? (task.isCompleted = !task.isCompleted) : null;
+        return task;
+      })
+    );
+  };
+
+  const handleTaskDeleted = (id: string) => {
+    Alert.alert('Excluir tarefa', 'Deseja excluir tarefa?', [
+      {
+        text: 'Sim',
+        style: 'default',
+        onPress: () =>
+          setTasks((tasks) => tasks.filter((task) => task.id !== id))
+      },
+      {
+        text: 'Não',
+        style: 'cancel'
+      }
+    ])
+  };
+
+  const totalTasksCreated = tasks.length
+  const totalTasksCompleted = tasks.filter(({ isCompleted }) => isCompleted).length
 
   return (
     <View style={styles.container}>
@@ -28,20 +72,28 @@ export function HomeScreen() {
           <View style={styles.row}>
             <Text style={styles.tasksCreated}>Criadas</Text>
             <View style={styles.counterContainer}>
-              <Text style={styles.counterText}>10</Text>
+            <Text style={styles.counterText}>{totalTasksCreated}</Text>
             </View>
           </View>
           <View style={styles.row}>
             <Text style={styles.tasksDone}>Concluídas</Text>
             <View style={styles.counterContainer}>
-              <Text style={styles.counterText}>5</Text>
+            <Text style={styles.counterText}>{totalTasksCompleted}</Text>
             </View>
           </View>
         </View>
         <FlatList
             data={tasks}
             keyExtractor={(tasks) => tasks.id}
-            
+            renderItem={({ item }) => (
+              <Task
+              key={item.id}
+              onTaskDone={() => handleTaskDone(item.id)}
+              onTaskDeleted={() => handleTaskDeleted(item.id)}
+              {...item}
+            />
+          )}
+          ListEmptyComponent={<Empty />}
         />
       </View>
     </View>

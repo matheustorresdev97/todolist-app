@@ -2,7 +2,7 @@ import { ActivityIndicator, View } from 'react-native'
 import { theme } from '../../theme'
 import { styles } from './styles'
 
-const Loading = () => {
+export const Loading = () => {
     return (
         <View style={styles.container}>
             <ActivityIndicator size={50} color={theme.colors.brand.blue} />
@@ -10,4 +10,3 @@ const Loading = () => {
     )
 }
 
-export default Loading

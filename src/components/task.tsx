@@ -10,8 +10,8 @@ type TasksProps = TaskProps & {
 
 export const Task = ({
   id,
-  title,
-  isCompleted,
+  task_description,
+  is_completed,
   onTaskDone,
   onTaskDeleted,
 }: TasksProps) => {
@@ -20,23 +20,23 @@ export const Task = ({
       <TouchableOpacity onPress={() => onTaskDone(id)}>
         <MaterialCommunityIcons
           name={
-            isCompleted
+            is_completed
               ? "checkbox-marked-circle-outline"
               : "checkbox-blank-circle-outline"
           }
-          size={24}
-          color={isCompleted ? colors.purple : colors.blue}
+          size={20}
+          color={is_completed ? colors.purple : colors.blue}
         />
       </TouchableOpacity>
       <View className="w-4/5 h-10 items-center justify-center mx-2">
         <Text
           className={
-            isCompleted
-              ? `text-sm bg-gray300 line-through`
-              : `text-sm bg-gray-100`
+            is_completed
+              ? `text-sm text-gray300 line-through`
+              : `text-sm text-gray-100`
           }
         >
-          {title}
+          {task_description}
         </Text>
       </View>
       <TouchableOpacity onPress={() => onTaskDeleted(id)}>

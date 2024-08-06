@@ -10,6 +10,7 @@ import { Loading } from './src/components/loading';
 import { Home } from './src/screens/home';
 
 
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
